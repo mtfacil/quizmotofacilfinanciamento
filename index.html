@@ -21,6 +21,16 @@
     // NÃO chamamos fbq('track', 'PageView') aqui.
   </script>
 
+<style>
+  .moto-price{
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: .85;
+  }
+</style>
+
+
   <style>
     :root{
       --brand:#d90404;
@@ -383,6 +393,28 @@
       cursor:pointer;
       text-decoration:underline;
     }
+
+
+/* PREÇOS PROMO */
+.moto-price-wrap{
+  margin-top: 6px;
+  line-height: 1.1;
+}
+
+.moto-price-old{
+  font-size: 12px;
+  font-weight: 700;
+  color: #d10000;
+  text-decoration: line-through;
+}
+
+.moto-price-new{
+  margin-top: 3px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #16a34a;; /* Troque cor do preço de deconto aqui */
+}
+
   </style>
 </head>
 <body>
@@ -553,7 +585,8 @@
     'SHI 175 EFI': 'https://www.mobiauto.com.br/comprar/details/23297418',
     'JEF 150': 'https://www.mobiauto.com.br/comprar/details/20220462',
     'URBAN 150': 'https://www.mobiauto.com.br/comprar/details/23504101',
-    'SOTRM 200': 'https://www.mobiauto.com.br/comprar/details/23505947'
+    'STORM 200': 'https://www.mobiauto.com.br/comprar/details/23505947',
+    'RIO 125': 'https://www.mobiauto.com.br/comprar/details/23544867'
   };
 
   // ===== CONFIGURAÇÃO DAS PERGUNTAS =====
@@ -633,8 +666,20 @@
     'SHI 175 EFI':'moto-shi-175-efi.png',
     'JEF 150':'moto-jef-150.png',
     'URBAN 150':'moto-urban.jpg',
-    'SOTRM 200':'storm-200.png'
+    'STORM 200':'storm-200.png',
+    'RIO 125':'rio-125.png'
   };
+
+const MOTO_PRICES = {
+  'JET 125SS': { old: 'R$ 12.990', new: 'R$ 11.990' },
+  'JET 50S': { old: 'R$ 11.990', new: 'R$ 10.990' },
+  'SHI 175 EFI': { old: 'R$ 20.990', new: 'R$ 19.990' },
+  'JEF 150': { old: 'R$ 16.990', new: 'R$ 15.990' },
+  'URBAN 150': { old: 'R$ 25.690', new: 'R$ 24.690' },
+  'STORM 200': { old: 'R$ 28.890', new: 'R$ 23.650' },
+  'RIO 125': { old: 'R$ 12.990', new: 'R$ 11.990' }
+};
+
 
   // ===== CONFIGURAÇÃO DOS VENDEDORES =====
   const SELLERS = [
@@ -862,12 +907,26 @@ Pode me ajudar com uma simulação nessa moto?`;
       card.className = 'moto-card';
 
       const imgSrc = MOTO_IMAGES[motoName] || '';
-      card.innerHTML = `
-        <img src="${imgSrc}" alt="${motoName}">
-        <div class="moto-name">${motoName}${motoName === recommendedMoto ? ' ⭐' : ''}</div>
-        <button class="moto-cta" data-moto="${motoName}">Simular esta moto</button>
-      `;
 
+const deal = MOTO_PRICES[motoName] || null;
+const oldPrice = (deal?.old || '').trim();
+const newPrice = (deal?.new || '').trim();
+
+card.innerHTML = `
+  <img src="${imgSrc}" alt="${motoName}">
+  <div class="moto-name">
+    ${motoName}${motoName === recommendedMoto ? ' ⭐' : ''}
+    ${(oldPrice || newPrice) ? `
+      <div class="moto-price-wrap">
+        ${oldPrice ? `<div class="moto-price-old">${oldPrice}</div>` : ''}
+        ${newPrice ? `<div class="moto-price-new">${newPrice}</div>` : ''}
+      </div>
+    ` : ''}
+  </div>
+  <button class="moto-cta" data-moto="${motoName}">Simular esta moto</button>
+`;
+
+      
       const btn = card.querySelector('.moto-cta');
       btn.addEventListener('click', ()=>{
         const chosenMoto = btn.getAttribute('data-moto');
